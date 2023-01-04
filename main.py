@@ -187,9 +187,9 @@ def multi_process(record_duration):
     # start second process
     prc2.start()
 
+    ret_value = Q.get()
     # wait until first process is done
     prc1.join()
-    ret_value = Q.get()
     # wait until second process is done
     prc2.join()
     print(prc1)
