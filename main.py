@@ -61,7 +61,7 @@ def get_song_length(minutes, seconds):
 
 
 # doesn't work
-def store_unidentified():
+def get_unidentified_index():
     """
     if a song is unidentified this function will store
     the mp3 as unidentified[index].mp3 for manual revision later
@@ -80,8 +80,6 @@ def store_unidentified():
         # increment counter
         int_content += 1
         print(int_content)
-        # store mp3 file 
-        # [TODO] 
         # write back into index file
         file_object = open(INDEX_FILENAME, 'w')
         str_content = str(int_content)
@@ -92,11 +90,13 @@ def store_unidentified():
         print(ex)
         # create new file and start index
         file_object = open(INDEX_FILENAME, 'w')
-        file_object.write("0")
-        # store the mp3 under the new index
-        #[TODO]
+        content = "0"
+        int_content = 0
+        file_object.write(content)
         # close file
         file_object.close()
+    return int_content
+
 
 # works
 def identify_song():
@@ -126,6 +126,7 @@ def identify_song():
                 title = track_info['track']['title']
                 artist = track_info['track']['subtitle']
                 song_info = (title, artist)
+                return song_info
     except Exception as ex:
         print(ex)
     return song_info
@@ -137,13 +138,12 @@ def recording(seconds):
     returns nothing
 
     """
+    # play the song
+    play_pause()
     # recording paramaters
     # sampling freq
     sample_frequency = 48000
     duration = seconds
-
-    # play the song
-    play_pause()
     # recording of the song
     recording = sd.rec(int(duration * sample_frequency),
         samplerate = sample_frequency, channels = 2)
@@ -154,15 +154,18 @@ def recording(seconds):
     # write out the recording
     write("recording.wav", sample_frequency, recording)
 
-# unknown
+# works
 def convert_to_mp3(song_info):
     # converstion to mp3
     sound = AudioSegment.from_wav('recording.wav')
-    sound.export('myfile.mp3', format='mp3')
-    song = 'myfile.mp3'
+    title = song_info[0]
+    artist = song_info[1]
+    filename = '%s - %s.mp3' % (title, artist)
+    sound.export(filename, format='mp3')
+    song = filename
     mp3file = MP3(song, ID3=EasyID3)
-    mp3file['title'] = [song_info[0]]
-    mp3file['artist'] = [song_info[1]]
+    mp3file['title'] = [title]
+    mp3file['artist'] = [artist]
     mp3file.save()
 
 # works
@@ -196,15 +199,22 @@ def multi_process(record_duration):
 
 
 if __name__ == '__main__':
-    n = len(sys.argv)
-    if n != 3:
-        raise Exception("Error: need minutes and seconds.")
+    # n = len(sys.argv)
+    # if n != 3:
+        # raise Exception("Error: need minutes and seconds.")
     
     # extract the arguments
-    arg1 = sys.argv[1]
-    arg2 = sys.argv[2]
+    # arg1 = sys.argv[1]
+    # arg2 = sys.argv[2]
     # calculate song length 
-    song_length = get_song_length(arg1, arg2)
+    # song_length = get_song_length(arg1, arg2)
     # give 2 seconds buffer time for recording
     # song_length += 2
-    recording(song_length)
+    song_info = identify_song()
+    if song_info != None:
+        convert_to_mp3(song_info)
+    else:
+        unidentified_index = get_unidentified_index()
+        song_info = ("unidentified", unidentified_index)
+        convert_to_mp3(song_info)
+
