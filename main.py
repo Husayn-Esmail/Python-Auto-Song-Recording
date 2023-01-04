@@ -130,7 +130,7 @@ def identify_song():
         print(ex)
     return song_info
 
-# unknown
+# works
 def recording(seconds):
     """
     Records a song for the duration specified in seconds (integer)
@@ -206,5 +206,5 @@ if __name__ == '__main__':
     # calculate song length 
     song_length = get_song_length(arg1, arg2)
     # give 2 seconds buffer time for recording
-    song_length += 2
+    # song_length += 2
     recording(song_length)
