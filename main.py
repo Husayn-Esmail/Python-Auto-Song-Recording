@@ -127,9 +127,7 @@ def identify_song(queue):
                 title = track_info['track']['title']
                 artist = track_info['track']['subtitle']
                 song_info = (title, artist)
-                print("before force put")
                 queue.put_nowait(song_info)
-                print("past return")
                 return
     except Exception as ex:
         print(ex)
