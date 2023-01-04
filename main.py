@@ -25,7 +25,7 @@ import multiprocessing
 
 # Global Constants
 INDEX_FILENAME = 'counter.txt'
-Q = multiprocessing.Queue()
+
 
 """
 PyRecording usage:
@@ -100,7 +100,7 @@ def get_unidentified_index():
 
 
 # works
-def identify_song():
+def identify_song(queue):
     """
     This function is meant to identify a song in the background in time to save the mp3 file
     """
@@ -127,15 +127,16 @@ def identify_song():
                 title = track_info['track']['title']
                 artist = track_info['track']['subtitle']
                 song_info = (title, artist)
-                Q.put(song_info)
+                print("before force put")
+                queue.put_nowait(song_info)
+                print("past return")
                 return
     except Exception as ex:
         print(ex)
-    Q.put(song_info)
-    return
+    queue.put(song_info)
 
 # works
-def recording(seconds):
+def recording(seconds, queue):
     """
     Records a song for the duration specified in seconds (integer)
     returns nothing
@@ -155,6 +156,7 @@ def recording(seconds):
     play_pause()
     # write out the recording
     write("recording.wav", sample_frequency, recording)
+    queue.put(None)
 
 # works
 def convert_to_mp3(song_info):
@@ -182,23 +184,26 @@ def play_pause():
 
 # unknown
 def multi_process(record_duration):
-  # creating processes for each of the functions
-    prc1 = multiprocessing.Process(target=recording, args=(record_duration,))
-    prc2 = multiprocessing.Process(target=identify_song, args=())
+    # create Queue to get return values
+    Q = multiprocessing.Queue()
+    # creating processes for each of the functions
+    prc1 = multiprocessing.Process(target=recording, args=(record_duration,Q))
+    prc2 = multiprocessing.Process(target=identify_song, args=(Q,))
+    rets = []
     # starting the first process
     prc1.start()
     # start second process
     prc2.start()
 
+    rets.append(Q.get())
+    rets.append(Q.get())
     # wait until first process is done
     prc1.join()
     # wait until second process is done
     prc2.join()
-    ret_value = Q.get()
-    print(ret_value)
     # when both processes are finished
     print("complete")
-    return ret_value
+    return rets[0] # only return the first value cuz that's the meta data
 
 
 if __name__ == '__main__':
