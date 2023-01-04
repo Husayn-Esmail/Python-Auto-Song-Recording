@@ -136,7 +136,6 @@ def recording(seconds):
     """
     Records a song for the duration specified in seconds (integer)
     returns nothing
-
     """
     # play the song
     play_pause()
@@ -180,9 +179,9 @@ def play_pause():
 # unknown
 def multi_process(record_duration):
   # creating processes for each of the functions
-    prc1 = multiprocessing.Process(target=recording, args=(record_duration))
-    prc2 = multiprocessing.Process(target=identify_song, args=None)
-
+    prc1 = multiprocessing.Process(target=recording, args=(record_duration,))
+    prc2 = multiprocessing.Process(target=identify_song, args=())
+    Q = multiprocessing.Queue()
     # starting the first process
     prc1.start()
     # start second process
@@ -190,27 +189,29 @@ def multi_process(record_duration):
 
     # wait until first process is done
     prc1.join()
+    ret_value = Q.get()
     # wait until second process is done
     prc2.join()
     print(prc1)
     print(prc2)
     # when both processes are finished
-    print("complete")  
+    print("complete")
+    return ret_value
 
 
 if __name__ == '__main__':
-    # n = len(sys.argv)
-    # if n != 3:
-        # raise Exception("Error: need minutes and seconds.")
+    n = len(sys.argv)
+    if n != 3:
+        raise Exception("Error: need minutes and seconds.")
     
     # extract the arguments
-    # arg1 = sys.argv[1]
-    # arg2 = sys.argv[2]
+    arg1 = sys.argv[1]
+    arg2 = sys.argv[2]
     # calculate song length 
-    # song_length = get_song_length(arg1, arg2)
+    song_length = get_song_length(arg1, arg2)
     # give 2 seconds buffer time for recording
     # song_length += 2
-    song_info = identify_song()
+    song_info = multi_process(song_length)
     if song_info != None:
         convert_to_mp3(song_info)
     else:

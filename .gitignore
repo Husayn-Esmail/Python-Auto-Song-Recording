@@ -1,4 +1,3 @@
 venv/
-recording.wav
-identification.wav
-unidentified*
+*.wav
+*.mp3
