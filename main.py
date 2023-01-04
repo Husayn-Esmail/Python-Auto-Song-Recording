@@ -25,6 +25,7 @@ import multiprocessing
 
 # Global Constants
 INDEX_FILENAME = 'counter.txt'
+Q = multiprocessing.Queue()
 
 """
 PyRecording usage:
@@ -126,10 +127,12 @@ def identify_song():
                 title = track_info['track']['title']
                 artist = track_info['track']['subtitle']
                 song_info = (title, artist)
-                return song_info
+                Q.put(song_info)
+                return
     except Exception as ex:
         print(ex)
-    return song_info
+    Q.put(song_info)
+    return
 
 # works
 def recording(seconds):
@@ -176,24 +179,23 @@ def play_pause():
     keyboard.press(Key.media_play_pause)
     keyboard.release(Key.media_play_pause)
 
+
 # unknown
 def multi_process(record_duration):
   # creating processes for each of the functions
     prc1 = multiprocessing.Process(target=recording, args=(record_duration,))
     prc2 = multiprocessing.Process(target=identify_song, args=())
-    Q = multiprocessing.Queue()
     # starting the first process
     prc1.start()
     # start second process
     prc2.start()
 
-    ret_value = Q.get()
     # wait until first process is done
     prc1.join()
     # wait until second process is done
     prc2.join()
-    print(prc1)
-    print(prc2)
+    ret_value = Q.get()
+    print(ret_value)
     # when both processes are finished
     print("complete")
     return ret_value
