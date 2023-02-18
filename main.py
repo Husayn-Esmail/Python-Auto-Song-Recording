@@ -203,12 +203,25 @@ def multi_process(record_duration):
     print("complete")
     return rets[0] # only return the first value cuz that's the meta data
 
+def record_song(minutes, seconds):
+    # calculate song length 
+    song_length = get_song_length(minutes, seconds)
+    # give 2 seconds buffer time for recording
+    # song_length += 2
+    song_info = multi_process(song_length)
+    if song_info != None:
+        convert_to_mp3(song_info)
+    else:
+        unidentified_index = get_unidentified_index()
+        song_info = ("unidentified", unidentified_index)
+        convert_to_mp3(song_info)
 
 if __name__ == '__main__':
+    # argument checking
     n = len(sys.argv)
     if n != 3:
         raise Exception("Error: need minutes and seconds.")
-    
+        
     # extract the arguments
     arg1 = sys.argv[1]
     arg2 = sys.argv[2]
