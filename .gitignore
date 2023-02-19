@@ -5,3 +5,5 @@ venv/
 Temps/
 Recordings/
 counter.txt
+*__pycache__*
+
