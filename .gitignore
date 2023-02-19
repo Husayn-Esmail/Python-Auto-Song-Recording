@@ -6,4 +6,4 @@ Temps/
 Recordings/
 counter.txt
 *__pycache__*
-
+*.txt
