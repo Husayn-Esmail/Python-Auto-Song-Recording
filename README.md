@@ -13,10 +13,10 @@ Mac only at the moment
 
 Since the program doesn't know how long the song is before recording, you need to give it the length of your song you want to record
 this can be done in the following way.
-"""
+'''
 python3 main.py [minutes] [seconds]
 python3 batch_record.py
-"""
+'''
 enter the name of a .txt file containing entries on each line in the form,
 [minutes] [seconds]
 [minutes] [seconds]
