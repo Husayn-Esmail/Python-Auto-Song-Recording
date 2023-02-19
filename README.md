@@ -9,7 +9,6 @@ You must also ensure that your default input is specified as the audio interface
 
 Mac only at the moment
 
-
 ## USAGE
 
 Since the program doesn't know how long the song is before recording, you need to give it the length of your song you want to record
