@@ -245,13 +245,69 @@ def makedirs():
     else:
         print(f"directory {date} already exists")
 
+def batch(filename):
+    song_lengths = []
+    with open(filename, "r") as f:
+        # split by spaces
+        for line in f:
+            song_lengths.append(line.split())
+
+    # ensure lengths were entered
+    if song_lengths == []:
+        raise Exception("Error, no lengths in file")
+    
+    # convert all entries to int
+    for array in song_lengths:
+        minutes = int(array[0])
+        seconds = int(array[1])
+        info = record_song(minutes, seconds)
+        print(f"recorded {info[0]} {info[1]}")
+
+def skip_to_next():
+    keyboard = Controller()
+    keyboard.press(Key.media_next)
+    keyboard.release(Key.media_next)
 
 if __name__ == '__main__':
-    # argument checking
+    HELP = """
+        USAGE:
+        python3 main.py -f [filename] -- see readme for formatting information
+        python3 main.py [minutes] [seconds]
+        i.e. python3 main.py 5 43 would be 5 minutes 43 seconds duration of song
+        python3 main.py -- shows this help screen
+        """
+    # deal with commandline arguments
     n = len(sys.argv)
-    if n != 3:
-       raise Exception("Error: need minutes and seconds.") 
+    # batch argument
+    if n == 2:
+        if sys.argv[1] == '-f':
+            print("You'll need to enter a filename")
+            f = input("enter a filename: ")
+            if f != "":
+                batch(f)
+        else:
+            print("Error invalid argument")
+            print(HELP)
+            sys.exit()
+    elif n == 3:
+        # handle case where filename is being passed
+        if sys.argv[1] == '-f':
+            filename = sys.argv[2]
+            batch(filename)
+        else:
+            minutes = sys.argv[1]
+            seconds = sys.argv[2]
+            # handle weird input combination
+            try:
+                verify_minutes = int(minutes)
+                verify_seconds = int(seconds)
+            except (ValueError) as exc:
+                print("Error, either minutes or seconds was not an integer")
+                sys.exit()
+            record_song(minutes, seconds)
+    # if no argument has been given, show the help screen
+    else:
+        print(HELP)
+
     # extract the arguments
-    minutes = sys.argv[1]
-    seconds = sys.argv[2]
-    record_song(minutes, seconds)
+    
