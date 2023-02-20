@@ -21,6 +21,7 @@ import sys
 
 # for identifying song in the background while recording the song
 import multiprocessing
+import datetime
 
 
 # Global Constants
@@ -113,9 +114,9 @@ def identify_song(queue):
     # wait for recording to finish
     sd.wait()
     # write out the sound bite
-    write("identification.wav", sample_frequency, recording)
+    write("Temps/identification.wav", sample_frequency, recording)
 
-    audio_file_to_recognize = open("identification.wav", 'rb').read()
+    audio_file_to_recognize = open("Temps/identification.wav", 'rb').read()
     shazam = Shazam(audio_file_to_recognize)
     recognize_generator = shazam.recognizeSong()
     song_info = None
@@ -153,16 +154,17 @@ def recording(seconds, queue):
     # pause song
     play_pause()
     # write out the recording
-    write("recording.wav", sample_frequency, recording)
+    write("Temps/recording.wav", sample_frequency, recording)
     queue.put(None)
 
 # works
 def convert_to_mp3(song_info):
     # converstion to mp3
-    sound = AudioSegment.from_wav('recording.wav')
+    sound = AudioSegment.from_wav('Temps/recording.wav')
     title = song_info[0]
     artist = song_info[1]
-    filename = '%s - %s.mp3' % (title, artist)
+    date = datetime.date.today().isoformat()
+    filename = 'Recordings/%s/%s - %s.mp3' % (date, title, artist)
     sound.export(filename, format='mp3')
     song = filename
     mp3file = MP3(song, ID3=EasyID3)
@@ -204,10 +206,12 @@ def multi_process(record_duration):
     return rets[0] # only return the first value cuz that's the meta data
 
 def record_song(minutes, seconds):
+    print("recording")
     # calculate song length 
     song_length = get_song_length(minutes, seconds)
     # give 2 seconds buffer time for recording
     # song_length += 2
+    do_os_things()
     song_info = multi_process(song_length)
     if song_info != None:
         convert_to_mp3(song_info)
@@ -216,11 +220,36 @@ def record_song(minutes, seconds):
         song_info = ("unidentified", unidentified_index)
         convert_to_mp3(song_info)
 
+def do_os_things():
+    # list the contents of the current directory
+    dir = os.listdir()
+    # if recordings doens't exist, create the directory
+    if "Recordings" not in dir:
+        print("making directory to hold recordings")
+        os.mkdir("Recordings")
+    else:
+        print("Recordings directory exists")
+
+    # if temps not in dir
+    if "Temps" not in dir:
+        print("making directory for temporary files")
+        os.mkdir("Temps")
+    else:
+        print("Temps directory exists")
+    
+    date = datetime.date.today().isoformat()
+    if f"Recordings{date}" not in os.listdir("Recordings"):
+        print(f"making directory {date}")
+        os.mkdir(f"Recordings/{date}")
+    else:
+        print(f"directory {date} already exists")
+
+
 if __name__ == '__main__':
     # argument checking
     n = len(sys.argv)
     if n != 3:
-        raise Exception("Error: need minutes and seconds.") 
+       raise Exception("Error: need minutes and seconds.") 
     # extract the arguments
     minutes = sys.argv[1]
     seconds = sys.argv[2]
