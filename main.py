@@ -20,8 +20,6 @@ import sys
 import multiprocessing
 import datetime
 
-import time
-
 
 # Global Constants
 INDEX_FILENAME = 'counter.txt'
@@ -212,7 +210,6 @@ def record_song(minutes, seconds):
     makedirs()
     print("recording")
     song_info = multi_process(song_length)
-    time.sleep(1)
     if song_info != None:
         convert_to_mp3(song_info)
     else:
