@@ -164,7 +164,7 @@ def convert_to_mp3(song_info):
     title = song_info[0]
     artist = song_info[1]
     date = datetime.date.today().isoformat()
-    filename = 'Recordings/%s/%s - %s.mp3' % (date, title, artist)
+    filename = f"Recordings/{date}/{title} - {artist}.mp3"
     sound.export(filename, format='mp3')
     song = filename
     mp3file = MP3(song, ID3=EasyID3)
