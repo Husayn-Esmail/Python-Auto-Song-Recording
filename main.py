@@ -219,6 +219,7 @@ def record_song(minutes, seconds):
         unidentified_index = get_unidentified_index()
         song_info = ("unidentified", unidentified_index)
         convert_to_mp3(song_info)
+    return song_info
 
 def makedirs():
     # list the contents of the current directory
