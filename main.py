@@ -238,7 +238,7 @@ def makedirs():
         print("Temps directory exists")
     
     date = datetime.date.today().isoformat()
-    if f"Recordings{date}" not in os.listdir("Recordings"):
+    if date not in os.listdir("Recordings"):
         print(f"making directory {date}")
         os.mkdir(f"Recordings/{date}")
     else:
