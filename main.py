@@ -2,15 +2,12 @@
 # for recording audio
 import sounddevice as sd
 from scipy.io.wavfile import write
-import wavio as wv
 # probably for deleting intermediary files
 import os
 # for recording
 from pydub import AudioSegment
 # for identifying currently playing song
 from ShazamAPI import Shazam
-# for printing pretty json
-import json
 # for writing metadata to mp3
 from mutagen.mp3 import MP3
 from mutagen.easyid3 import EasyID3
@@ -22,6 +19,8 @@ import sys
 # for identifying song in the background while recording the song
 import multiprocessing
 import datetime
+
+import time
 
 
 # Global Constants
@@ -210,9 +209,10 @@ def record_song(minutes, seconds):
     song_length = get_song_length(minutes, seconds)
     # give 2 seconds buffer time for recording
     # song_length += 2
-    print("recording")
     makedirs()
+    print("recording")
     song_info = multi_process(song_length)
+    time.sleep(1)
     if song_info != None:
         convert_to_mp3(song_info)
     else:
@@ -261,7 +261,7 @@ def batch(filename):
         minutes = int(array[0])
         seconds = int(array[1])
         info = record_song(minutes, seconds)
-        print(f"recorded {info[0]} {info[1]}")
+        print(f"recorded {info[0]} - {info[1]}")
 
 def skip_to_next():
     keyboard = Controller()
