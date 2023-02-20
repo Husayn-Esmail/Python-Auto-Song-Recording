@@ -211,7 +211,7 @@ def record_song(minutes, seconds):
     song_length = get_song_length(minutes, seconds)
     # give 2 seconds buffer time for recording
     # song_length += 2
-    do_os_things()
+    makedirs()
     song_info = multi_process(song_length)
     if song_info != None:
         convert_to_mp3(song_info)
@@ -220,7 +220,7 @@ def record_song(minutes, seconds):
         song_info = ("unidentified", unidentified_index)
         convert_to_mp3(song_info)
 
-def do_os_things():
+def makedirs():
     # list the contents of the current directory
     dir = os.listdir()
     # if recordings doens't exist, create the directory
