@@ -16,9 +16,11 @@ this can be done in the following way.
 
 ``` Python
 python3 main.py [minutes] [seconds]
-python3 batch_record.py
+python3 batch_record.py [filename]
 ```
 
+note that if you don't enter a filename, you'll be asked to input a filename when
+running batch_record.py
 enter the name of a .txt file containing entries on each line in the form,
 [minutes] [seconds]
 [minutes] [seconds]
