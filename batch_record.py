@@ -1,4 +1,6 @@
 from main import record_song
+import sys
+
 def batch(filename):
     song_lengths = []
     with open(filename, "r") as f:
@@ -17,5 +19,10 @@ def batch(filename):
         record_song(minutes, seconds)
 
 if __name__ == '__main__':
-    f = input("enter a filename: ")
+    f = ""
+    if len(sys.argv) != 2:
+        f = input("enter a filename: ")
+    else:
+        f = sys.argv[1]
+        
     batch(f)
