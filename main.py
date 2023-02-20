@@ -20,6 +20,8 @@ import sys
 import multiprocessing
 import datetime
 
+import time
+
 
 # Global Constants
 INDEX_FILENAME = 'counter.txt'
@@ -259,6 +261,7 @@ def batch(filename):
         seconds = int(array[1])
         info = record_song(minutes, seconds)
         print(f"recorded {info[0]} - {info[1]}")
+        time.sleep(1)
 
 def skip_to_next():
     keyboard = Controller()
