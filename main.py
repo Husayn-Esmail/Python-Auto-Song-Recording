@@ -206,11 +206,11 @@ def multi_process(record_duration):
     return rets[0] # only return the first value cuz that's the meta data
 
 def record_song(minutes, seconds):
-    print("recording")
     # calculate song length 
     song_length = get_song_length(minutes, seconds)
     # give 2 seconds buffer time for recording
     # song_length += 2
+    print("recording")
     makedirs()
     song_info = multi_process(song_length)
     if song_info != None:
