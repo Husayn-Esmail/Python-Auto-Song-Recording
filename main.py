@@ -143,7 +143,7 @@ def recording(seconds, queue):
     play_pause()
     # recording paramaters
     # sampling freq
-    sample_frequency = 48000
+    sample_frequency = 96000
     duration = seconds
     # recording of the song
     recording = sd.rec(int(duration * sample_frequency),
@@ -164,7 +164,7 @@ def convert_to_mp3(song_info):
     artist = song_info[1]
     date = datetime.date.today().isoformat()
     filename = f"Recordings/{date}/{title} - {artist}.mp3"
-    sound.export(filename, format='mp3')
+    sound.export(filename, format='mp3', bitrate="320k")
     song = filename
     mp3file = MP3(song, ID3=EasyID3)
     mp3file['title'] = [title]
