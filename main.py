@@ -43,18 +43,18 @@ def get_song_length(minutes, seconds):
     minutes: Str
     seconds: Str
     gets a song's length in seconds based on command line arguments
-    returns total duration in seconds(int)
+    returns total duration in seconds(float)
     """
-    # convert minutes and seconds from strings to integers
+    # convert minutes and seconds from strings to integers/float
     try:
         minutes = int(minutes)
     except Exception:
         print("Error, minutes is not an integer")
     
     try:
-        seconds = int(seconds)
+        seconds = float(seconds)
     except Exception:
-        print("Error: seconds is not an integer")
+        print("Error: seconds could not be converted to float")
     # convert minutes to seconds
     minutes *= 60
     total = minutes + seconds
@@ -214,6 +214,7 @@ def multi_process(record_duration):
 def record_song(minutes, seconds):
     # calculate song length 
     song_length = get_song_length(minutes, seconds)
+    print(f"Song length calculated: {song_length}")
     # give 2 seconds buffer time for recording
     # song_length += 2
     makedirs()
@@ -265,7 +266,7 @@ def batch(filename):
     # convert all entries to int
     for array in song_lengths:
         minutes = int(array[0])
-        seconds = int(array[1])
+        seconds = float(array[1])
         info = record_song(minutes, seconds)
         print(f"recorded {info[0]} - {info[1]}")
         time.sleep(1)
@@ -307,9 +308,9 @@ if __name__ == '__main__':
             # handle weird input combination
             try:
                 verify_minutes = int(minutes)
-                verify_seconds = int(seconds)
+                verify_seconds = float(seconds)
             except (ValueError) as exc:
-                print("Error, either minutes or seconds was not an integer")
+                print("Error, either minutes was not an integer or seconds could not be converted to float")
                 sys.exit()
             record_song(minutes, seconds)
     # if no argument has been given, show the help screen
