@@ -5,7 +5,7 @@ from scipy.io.wavfile import write
 # probably for deleting intermediary files
 import os
 # for recording
-from pydub import AudioSegment
+from pydub import AudioSegment, effects
 # for identifying currently playing song
 from ShazamAPI import Shazam
 # for writing metadata to mp3
@@ -156,8 +156,15 @@ def recording(seconds, queue):
     write("Temps/recording.wav", sample_frequency, recording)
     queue.put(None)
 
+def normalize(filename, format):
+    rawsound = AudioSegment.from_file(filename, format)  
+    normalizedsound = effects.normalize(rawsound)  
+    normalizedsound.export(filename, format=format)
+
 # works
 def convert_to_mp3(song_info):
+    # normalize before conversion
+    normalize("Temps/recording.wav", "wav")
     # converstion to mp3
     sound = AudioSegment.from_wav('Temps/recording.wav')
     title = song_info[0]
