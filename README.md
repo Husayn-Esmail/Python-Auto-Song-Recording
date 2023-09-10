@@ -3,6 +3,9 @@
 Software to record music from apple music, identify the song and save the
 recording
 
+**_NOTE_** This program is currently broken due to the shazam api being a bit
+messed up, not sure what exactly is wrong but will investigate at some point.
+
 **_NOTE_**: This program requires you have an audio interface that supports
 loopback recording and an Apple Music Subscription
 You must also ensure that your default input is specified as the audio
