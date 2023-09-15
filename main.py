@@ -120,15 +120,14 @@ def identify_song(queue):
     recognize_generator = shazam.recognizeSong()
     song_info = None
     try:
-        while True:
-            info = next(recognize_generator)
-            track_info = info[1]
-            if 'track' in track_info:
-                title = track_info['track']['title']
-                artist = track_info['track']['subtitle']
-                song_info = (title, artist)
-                queue.put_nowait(song_info)
-                return
+        info = next(recognize_generator)
+        track_info = info[1]
+        if 'track' in track_info:
+            title = track_info['track']['title']
+            artist = track_info['track']['subtitle']
+            song_info = (title, artist)
+            queue.put_nowait(song_info)
+            return
     except Exception as ex:
         print(ex)
     queue.put(song_info)
