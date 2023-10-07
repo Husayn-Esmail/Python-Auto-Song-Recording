@@ -344,13 +344,19 @@ if __name__ == '__main__':
         """
     # deal with commandline arguments
     n = len(sys.argv)
+
+    # read the index before everything else.
+    UNIDENTIFIED_INDEX = read_unidentified_index()
+
     # batch argument
     if n == 2:
-        if sys.argv[1] == '-f':
+        if sys.argv[1] == '-f' or sys.argv[1] == '-sf':
             print("You'll need to enter a filename")
             f = input("enter a filename: ")
-            if f != "":
+            if f != "" and sys.argv[1] == '-f':
                 batch(f)
+            elif f != "" and sys.argv[1] == '-sf':
+                SingleThreadedRecord.single_threaded_batch(f)
         else:
             print("Error invalid argument")
             print(HELP)
@@ -360,6 +366,9 @@ if __name__ == '__main__':
         if sys.argv[1] == '-f':
             filename = sys.argv[2]
             batch(filename)
+        elif sys.argv[1] == '-sf':
+            filename = sys.argv[2]
+            SingleThreadedRecord.single_threaded_batch(filename)
         else:
             minutes = sys.argv[1]
             seconds = sys.argv[2]
@@ -371,12 +380,29 @@ if __name__ == '__main__':
                 print("Error, either minutes was not an integer or seconds could not be converted to float")
                 sys.exit()
 
-            # read the index before calling record_song
-            UNIDENTIFIED_INDEX = read_unidentified_index()
+            # record song
             record_song(minutes, seconds)
-            # write the index after calling record_song
-            write_unidentified_index(UNIDENTIFIED_INDEX)
+
+    elif n == 4:
+        if sys.argv[1] == '-s':
+            minutes = sys.argv[1]
+            seconds = sys.argv[2]
+            # handle weird input combination
+            try:
+                verify_minutes = int(minutes)
+                verify_seconds = float(seconds)
+            except (ValueError) as e:
+                print("Error, either minutes was not an integer or seconds could not be converted to float")
+                sys.exit()
+            
+            # record song in single threaded mode
+            SingleThreadedRecord.single_thread_record_song(minutes, seconds)
+
     # if no argument has been given, show the help screen
     else:
         print(HELP)
+
+    # write the index after all operations at the risk of losing the current unidentified index
+    # should an error occur.
+    write_unidentified_index(UNIDENTIFIED_INDEX)
 
