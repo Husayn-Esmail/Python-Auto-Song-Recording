@@ -1,29 +1,42 @@
-# import library
+# import libraries
+
 # for recording audio
 import sounddevice as sd
 from scipy.io.wavfile import write
-# probably for deleting intermediary files
-import os
+
 # for recording
 from pydub import AudioSegment, effects
+
 # for identifying currently playing song
 from ShazamAPI import Shazam
+
 # for writing metadata to mp3
 from mutagen.mp3 import MP3
 from mutagen.easyid3 import EasyID3
-# for automatically playing and pausing media
+
+# for playing and pausing media
 from pynput.keyboard import Key, Controller
+
 # for arguments
 import sys
 
 # for identifying song in the background while recording the song
 import multiprocessing
+
+# for creating date based folders
 import datetime
 
+# for sleeping
 import time
 
+# for creating folders
+import os
 
-# Global Constants
+# for adding the option of running the program in single threaded mode
+import SingleThreadedRecord
+
+
+# Global Constants ------------------------------
 INDEX_FILENAME = 'counter.txt'
 UNIDENTIFIED_INDEX = 0
 
@@ -173,14 +186,14 @@ def recording(seconds, queue):
     sample_frequency = 96000
     duration = seconds
     # recording of the song
-    recording = sd.rec(int(duration * sample_frequency),
+    song_recording = sd.rec(int(duration * sample_frequency),
         samplerate = sample_frequency, channels = 2)
     # wait for recording to finish
     sd.wait()
     # pause song
     play_pause()
     # write out the recording
-    write("Temps/recording.wav", sample_frequency, recording)
+    write("Temps/recording.wav", sample_frequency, song_recording)
     queue.put(None)
 
 def normalize(filename, format):
@@ -324,6 +337,8 @@ if __name__ == '__main__':
         USAGE:
         python3 main.py -f [filename] -- see readme for formatting information
         python3 main.py [minutes] [seconds]
+        python3 main.py -sf [filename] # runs the program in single threaded mode on a batch of songs
+        python3 main.py -s [minutes] [seconds] # runs the program in single threaded mode on a single song
         i.e. python3 main.py 5 43 would be 5 minutes 43 seconds duration of song
         python3 main.py -- shows this help screen
         """
