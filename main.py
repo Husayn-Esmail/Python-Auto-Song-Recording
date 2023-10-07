@@ -256,8 +256,10 @@ def record_song(minutes, seconds):
     if song_info != None:
         convert_to_mp3(song_info)
     else:
-        unidentified_index = get_unidentified_index()
-        song_info = ("unidentified", unidentified_index)
+        # unidentified_index = get_unidentified_index()
+        # song_info = ("unidentified", unidentified_index)
+        song_info = ("unidentified", UNIDENTIFIED_INDEX)
+        UNIDENTIFIED_INDEX += 1 # increment unidentified index
         convert_to_mp3(song_info)
     return song_info
 
@@ -297,6 +299,9 @@ def batch(filename):
     if song_lengths == []:
         raise Exception("Error, no lengths in file")
     
+    # read the undentified index regardless before starting the record loop
+    UNIDENTIFIED_INDEX = read_unidentified_index()
+
     # convert all entries to int
     for array in song_lengths:
         minutes = int(array[0])
@@ -304,6 +309,9 @@ def batch(filename):
         info = record_song(minutes, seconds)
         print(f"recorded {info[0]} - {info[1]}")
         time.sleep(1)
+    
+    # write out to the unidentified index file
+    write_unidentified_index(UNIDENTIFIED_INDEX)
 
 def skip_to_next():
     print("skipping to next...")
@@ -347,10 +355,13 @@ if __name__ == '__main__':
             except (ValueError) as exc:
                 print("Error, either minutes was not an integer or seconds could not be converted to float")
                 sys.exit()
+
+            # read the index before calling record_song
+            UNIDENTIFIED_INDEX = read_unidentified_index()
             record_song(minutes, seconds)
+            # write the index after calling record_song
+            write_unidentified_index(UNIDENTIFIED_INDEX)
     # if no argument has been given, show the help screen
     else:
         print(HELP)
 
-    # extract the arguments
-    
