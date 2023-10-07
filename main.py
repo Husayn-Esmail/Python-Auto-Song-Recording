@@ -25,6 +25,7 @@ import time
 
 # Global Constants
 INDEX_FILENAME = 'counter.txt'
+UNIDENTIFIED_INDEX = 0
 
 
 """
@@ -37,7 +38,7 @@ if the song cannot be identified then it will be labelled as
 unidentified[index].mp3
 """
 
-# works
+
 def get_song_length(minutes, seconds):
     """
     minutes: Str
@@ -88,7 +89,7 @@ def write_unidentified_index(index):
         exit()
 
 
-# doesn't work
+
 def get_unidentified_index():
     """
     if a song is unidentified this function will store
@@ -126,7 +127,7 @@ def get_unidentified_index():
     return int_content
 
 
-# works
+
 def identify_song(queue):
     """
     This function is meant to identify a song in the background in time to save the mp3 file
@@ -159,7 +160,7 @@ def identify_song(queue):
         print(ex)
     queue.put(song_info)
 
-# works
+
 def recording(seconds, queue):
     """
     Records a song for the duration specified in seconds (integer)
@@ -183,12 +184,14 @@ def recording(seconds, queue):
     queue.put(None)
 
 def normalize(filename, format):
+    print("Normalizing Audio...")
     rawsound = AudioSegment.from_file(filename, format)  
     normalizedsound = effects.normalize(rawsound)  
     normalizedsound.export(filename, format=format)
 
-# works
+
 def convert_to_mp3(song_info):
+    print("Converting to mp3...")
     # normalize before conversion
     normalize("Temps/recording.wav", "wav")
     # converstion to mp3
@@ -204,23 +207,27 @@ def convert_to_mp3(song_info):
     mp3file['artist'] = [artist]
     mp3file.save()
 
-# works
+
 def play_pause():
     """
     automates pressing the play/pause media key when recording.
     """
+    print("play_pause() called")
     keyboard = Controller()
     keyboard.press(Key.media_play_pause)
     keyboard.release(Key.media_play_pause)
 
 
-# unknown
+
 def multi_process(record_duration):
+    print("setting up multi_process...")
     # create Queue to get return values
     Q = multiprocessing.Queue()
+    print("queue init'd...")
     # creating processes for each of the functions
     prc1 = multiprocessing.Process(target=recording, args=(record_duration,Q))
     prc2 = multiprocessing.Process(target=identify_song, args=(Q,))
+    print("processes started")
     rets = []
     # starting the first process
     prc1.start()
@@ -279,6 +286,7 @@ def makedirs():
         print(f"directory {date} already exists")
 
 def batch(filename):
+    print("Running in batch mode...")
     song_lengths = []
     with open(filename, "r") as f:
         # split by spaces
@@ -298,6 +306,7 @@ def batch(filename):
         time.sleep(1)
 
 def skip_to_next():
+    print("skipping to next...")
     keyboard = Controller()
     keyboard.press(Key.media_next)
     keyboard.release(Key.media_next)
