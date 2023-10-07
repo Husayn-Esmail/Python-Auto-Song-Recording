@@ -61,6 +61,25 @@ def get_song_length(minutes, seconds):
     return total
 
 
+def read_unidentified_index():
+    index = 0
+    try:
+        f = open(INDEX_FILENAME, 'r')
+        # read overwrite index and convert it to int
+        index = int(f.readline())
+        f.close()
+    except Exception as e:
+        print(e)
+        # create new file and start index
+        f = open(INDEX_FILENAME, 'w')
+        f.write(index)
+        f.close()
+    return index
+    
+
+        
+
+
 # doesn't work
 def get_unidentified_index():
     """
