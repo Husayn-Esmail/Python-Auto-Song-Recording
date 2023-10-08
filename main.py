@@ -94,7 +94,7 @@ def read_unidentified_index():
 def write_unidentified_index(index):
     try:
         f = open(INDEX_FILENAME, 'w')
-        f.write(index)
+        f.write(str(index))
         f.close()
     except Exception as e:
         print(e)
