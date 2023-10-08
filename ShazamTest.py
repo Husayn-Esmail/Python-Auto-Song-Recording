@@ -1,7 +1,9 @@
 from ShazamAPI import Shazam
+import sys
 
 if __name__ == '__main__':
-    song_to_recognize = open("Recordings/2023-08-01/I Don't Miss You - JP Saxe.mp3", "rb").read()
+    filename = sys.argv[1]
+    song_to_recognize = open(filename, "rb").read()
     shazam = Shazam(song_to_recognize)
     recognize_generator = shazam.recognizeSong()
     song_info = None

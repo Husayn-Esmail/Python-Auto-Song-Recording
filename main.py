@@ -383,8 +383,8 @@ if __name__ == '__main__':
 
     elif n == 4:
         if sys.argv[1] == '-s':
-            minutes = sys.argv[1]
-            seconds = sys.argv[2]
+            minutes = sys.argv[2]
+            seconds = sys.argv[3]
             # handle weird input combination
             try:
                 verify_minutes = int(minutes)

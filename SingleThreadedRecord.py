@@ -46,7 +46,7 @@ def single_threaded_recording(seconds):
     play_pause()
 
     # record song
-    song_recording = sd.rec(sample_freq_by_duration, sample_rate=sample_frequency, channels=2)
+    song_recording = sd.rec(sample_freq_by_duration, samplerate=sample_frequency, channels=2)
 
     # wait for recording to finish
     sd.wait()
