@@ -85,9 +85,7 @@ def read_unidentified_index():
     except Exception as e:
         print(e)
         # create new file and start index
-        f = open(INDEX_FILENAME, 'w')
-        f.write(index)
-        f.close()
+        write_unidentified_index(index)
     return index
     
 
