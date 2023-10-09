@@ -177,8 +177,7 @@ def recording(seconds, queue):
     Records a song for the duration specified in seconds (integer)
     returns nothing
     """
-    # play the song
-    play_pause()
+    
     # recording paramaters
     # sampling freq
     sample_frequency = 96000
@@ -186,12 +185,19 @@ def recording(seconds, queue):
     # recording of the song
     song_recording = sd.rec(int(duration * sample_frequency),
         samplerate = sample_frequency, channels = 2)
+    
+    # play the song
+    play_pause()
+
     # wait for recording to finish
     sd.wait()
     # pause song
     play_pause()
+
+    print("writing recording to disk...")
     # write out the recording
     write("Temps/recording.wav", sample_frequency, song_recording)
+    print("done")
     queue.put(None)
 
 def normalize(filename, format):
