@@ -18,6 +18,9 @@ from main import get_song_length, \
 
 
 def single_threaded_identify_song():
+    """
+    Note that you must call makedirs before calling this function
+    """
     audio_file_to_recognize = open("Temps/recording.wav", "rb").read()
     shazam = Shazam(audio_file_to_recognize)
     recognize_generator = shazam.recognizeSong()
@@ -60,7 +63,6 @@ def single_thread_record_song(minutes, seconds):
     # calculate song length
     song_length = get_song_length(minutes, seconds)
     print(f"Song length calculated: {song_length}")
-    makedirs()
     print("recording")
     single_threaded_recording(song_length)
     song_info = single_threaded_identify_song()
@@ -86,6 +88,8 @@ def single_threaded_batch(filename):
 
         # read the unidentified index before starting the record loop
         UNIDENTIFIED_INDEX = read_unidentified_index()
+        # make directories
+        makedirs()
 
         # convert all entries to int
         for array in song_lengths:

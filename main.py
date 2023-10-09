@@ -267,7 +267,7 @@ def record_song(minutes, seconds):
     print(f"Song length calculated: {song_length}")
     # give 2 seconds buffer time for recording
     # song_length += 2
-    makedirs()
+
     print("recording")
     song_info = multi_process(song_length)
     if song_info != None:
@@ -319,6 +319,9 @@ def batch(filename):
     
     # read the undentified index regardless before starting the record loop
     UNIDENTIFIED_INDEX = read_unidentified_index()
+
+    # make dirs
+    makedirs()
 
     # convert all entries to int
     for array in song_lengths:
@@ -373,6 +376,7 @@ if __name__ == '__main__':
             batch(filename)
         elif sys.argv[1] == '-sf':
             filename = sys.argv[2]
+            makedirs()
             SingleThreadedRecord.single_threaded_batch(filename)
         else:
             minutes = sys.argv[1]
@@ -386,6 +390,7 @@ if __name__ == '__main__':
                 sys.exit()
 
             # record song
+            makedirs
             record_song(minutes, seconds)
 
     elif n == 4:
