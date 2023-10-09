@@ -13,15 +13,12 @@ from main import get_song_length, \
     read_unidentified_index, \
     write_unidentified_index, \
     makedirs, \
-    play_pause, convert_to_mp3
-
-# Global Constants --------------------------------
-INDEX_FILENAME = 'counter.txt'
-UNIDENTIFIED_INDEX = 0
+    play_pause, convert_to_mp3, \
+    UNIDENTIFIED_INDEX, INDEX_FILENAME
 
 
 def single_threaded_identify_song():
-    audio_file_to_recognize = open("Temps/identification.wav", "rb").read()
+    audio_file_to_recognize = open("Temps/recording.wav", "rb").read()
     shazam = Shazam(audio_file_to_recognize)
     recognize_generator = shazam.recognizeSong()
     song_info = None
@@ -42,17 +39,16 @@ def single_threaded_recording(seconds):
     duration = seconds
     sample_freq_by_duration = int(duration * sample_frequency)
 
-    # play song
-    play_pause()
-
     # record song
     song_recording = sd.rec(sample_freq_by_duration, samplerate=sample_frequency, channels=2)
-
+    # play song
+    play_pause()
     # wait for recording to finish
     sd.wait()
 
     # pause song
     play_pause()
+    
 
     # write out the recording
     print('writing recording to disk...')
