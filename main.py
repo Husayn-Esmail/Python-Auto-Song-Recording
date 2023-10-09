@@ -37,8 +37,8 @@ import SingleThreadedRecord
 
 
 # Global Constants ------------------------------
-INDEX_FILENAME = 'counter.txt'
 UNIDENTIFIED_INDEX = 0
+INDEX_FILENAME = 'counter.txt'
 
 
 """
@@ -273,6 +273,7 @@ def record_song(minutes, seconds):
     if song_info != None:
         convert_to_mp3(song_info)
     else:
+        global UNIDENTIFIED_INDEX
         # unidentified_index = get_unidentified_index()
         # song_info = ("unidentified", unidentified_index)
         song_info = ("unidentified", UNIDENTIFIED_INDEX)
