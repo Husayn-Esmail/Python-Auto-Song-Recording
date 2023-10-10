@@ -329,7 +329,6 @@ def batch(filename):
         seconds = float(array[1])
         info = record_song(minutes, seconds)
         print(f"recorded {info[0]} - {info[1]}")
-        time.sleep(1)
     
     # write out to the unidentified index file
     write_unidentified_index(UNIDENTIFIED_INDEX)
