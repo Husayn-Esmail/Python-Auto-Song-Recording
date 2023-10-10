@@ -182,12 +182,14 @@ def recording(seconds, queue):
     # sampling freq
     sample_frequency = 96000
     duration = seconds
+
+    # play the song
+    play_pause()
+
     # recording of the song
     song_recording = sd.rec(int(duration * sample_frequency),
         samplerate = sample_frequency, channels = 2)
     
-    # play the song
-    play_pause()
 
     # wait for recording to finish
     sd.wait()
