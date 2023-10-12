@@ -59,6 +59,7 @@ def single_threaded_recording(seconds):
 
 
 def single_thread_record_song(minutes, seconds):
+    global UNIDENTIFIED_INDEX
     print("Running single threaded record song")
     # calculate song length
     song_length = get_song_length(minutes, seconds)
