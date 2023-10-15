@@ -377,7 +377,6 @@ if __name__ == '__main__':
             batch(filename)
         elif sys.argv[1] == '-sf':
             filename = sys.argv[2]
-            makedirs()
             SingleThreadedRecord.single_threaded_batch(filename)
         else:
             minutes = sys.argv[1]
@@ -391,7 +390,7 @@ if __name__ == '__main__':
                 sys.exit()
 
             # record song
-            makedirs
+            makedirs()
             record_song(minutes, seconds)
 
     elif n == 4:
@@ -405,7 +404,7 @@ if __name__ == '__main__':
             except (ValueError) as e:
                 print("Error, either minutes was not an integer or seconds could not be converted to float")
                 sys.exit()
-            
+            makedirs()
             # record song in single threaded mode
             SingleThreadedRecord.single_thread_record_song(minutes, seconds)
 
