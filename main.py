@@ -383,8 +383,14 @@ if __name__ == '__main__':
             SingleThreadedRecord.single_threaded_batch(filename)
         elif sys.argv[1] == '-c':
             filename = sys.argv[2]
+            # identify song
             song_info = SingleThreadedRecord.single_threaded_identify_song(filename)
-            convert_to_mp3(song_info)
+            if song_info != None:
+                convert_to_mp3(song_info)
+            else:
+                song_info = ("unidentified", UNIDENTIFIED_INDEX)
+                UNIDENTIFIED_INDEX += 1 # increment unidentified index
+                convert_to_mp3(song_info)
         else:
             minutes = sys.argv[1]
             seconds = sys.argv[2]

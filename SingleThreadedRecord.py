@@ -21,6 +21,7 @@ def single_threaded_identify_song(filename):
     """
     Note that you must call makedirs before calling this function
     """
+    print(f"identifying {filename}...")
     audio_file_to_recognize = open(filename, "rb").read()
     shazam = Shazam(audio_file_to_recognize)
     recognize_generator = shazam.recognizeSong()
@@ -34,7 +35,10 @@ def single_threaded_identify_song(filename):
             song_info = (title, artist)
     except Exception as e:
         print(e)
-    
+    if song_info != None:
+        print(f"identified artist: {song_info[1]} song: {song_info[0]}")
+    else:
+        print("song unidentifiable..")
     return song_info
 
 def single_threaded_recording(seconds):
