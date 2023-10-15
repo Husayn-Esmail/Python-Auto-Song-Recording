@@ -217,6 +217,9 @@ def convert_to_mp3(song_info):
     sound = AudioSegment.from_wav('Temps/recording.wav')
     title = song_info[0]
     artist = song_info[1]
+    # clean up identification data
+    title = title.replace('/', '-')
+    artist = artist.replace('/', '-')
     date = datetime.date.today().isoformat()
     filename = f"Recordings/{date}/{title} - {artist}.mp3"
     sound.export(filename, format='mp3', bitrate="320k")
@@ -378,6 +381,10 @@ if __name__ == '__main__':
         elif sys.argv[1] == '-sf':
             filename = sys.argv[2]
             SingleThreadedRecord.single_threaded_batch(filename)
+        elif sys.argv[1] == '-c':
+            filename = sys.argv[2]
+            song_info = SingleThreadedRecord.single_threaded_identify_song(filename)
+            convert_to_mp3(song_info)
         else:
             minutes = sys.argv[1]
             seconds = sys.argv[2]

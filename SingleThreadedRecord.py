@@ -17,11 +17,11 @@ from main import get_song_length, \
     UNIDENTIFIED_INDEX, INDEX_FILENAME
 
 
-def single_threaded_identify_song():
+def single_threaded_identify_song(filename):
     """
     Note that you must call makedirs before calling this function
     """
-    audio_file_to_recognize = open("Temps/recording.wav", "rb").read()
+    audio_file_to_recognize = open(filename, "rb").read()
     shazam = Shazam(audio_file_to_recognize)
     recognize_generator = shazam.recognizeSong()
     song_info = None
@@ -66,7 +66,7 @@ def single_thread_record_song(minutes, seconds):
     print(f"Song length calculated: {song_length}")
     print("recording")
     single_threaded_recording(song_length)
-    song_info = single_threaded_identify_song()
+    song_info = single_threaded_identify_song("Temps/recording.wav")
     if song_info != None:
         convert_to_mp3(song_info)
     else:
