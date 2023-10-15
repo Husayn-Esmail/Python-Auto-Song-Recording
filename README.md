@@ -7,6 +7,28 @@ recording
 loopback recording and an Apple Music Subscription
 You must also ensure that your default input is specified as the audio
 interface before starting the recording
+You also need to install ffmpeg for the program to work properly
+On mac I recommend using brew
+
+## Setup
+
+### Mac OS
+
+Install ffmpeg
+
+```Bash
+brew install ffmpeg
+```
+
+clone the repository and install dependencies
+
+```Bash
+git clone https://github.com/Husayn-Esmail/Python-Auto-Song-Recording.git
+cd Python-Auto-Song-Recording
+python3 -m venv venv
+source venv/bin/activate
+python3 -m pip install -r requirements.txt
+```
 
 ## Compatiblity
 
@@ -20,7 +42,9 @@ done in the following way.
 
 ```Bash
 python3 main.py [minutes] [seconds]
+python3 main.py -s [minutes] [seconds]
 python3 main.py -f [filename]
+python3 main.py -sf [filename]
 python3 main.py # shows help
 ```
 
