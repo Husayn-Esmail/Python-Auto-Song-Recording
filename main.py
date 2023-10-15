@@ -216,7 +216,7 @@ def convert_to_mp3(song_info):
     # converstion to mp3
     sound = AudioSegment.from_wav('Temps/recording.wav')
     title = song_info[0]
-    artist = song_info[1]
+    artist = str(song_info[1])
     # clean up identification data
     title = title.replace('/', '-')
     artist = artist.replace('/', '-')
