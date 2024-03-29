@@ -195,6 +195,7 @@ def recording(seconds, queue):
     sd.wait()
     # pause song
     play_pause()
+    skip_to_next()
 
     print("writing recording to disk...")
     # write out the recording
