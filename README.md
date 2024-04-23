@@ -73,4 +73,4 @@ improve performance
 - fix print statements so that they're more useful and give clearer information about what's currently being recorded
 - listen for a keyboard command or combination to exit cleanly if user wants to stop the job early or on the next end of song for checkpointing
 - fix program so that it doesn't break at midnight
-
+- print recording time elapsed for current song
