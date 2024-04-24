@@ -74,3 +74,4 @@ improve performance
 - listen for a keyboard command or combination to exit cleanly if user wants to stop the job early or on the next end of song for checkpointing
 - fix program so that it doesn't break at midnight
 - print recording time elapsed for current song
+- There's a bug when keeping track of the unidentified tracks where if the program crashes, the counter.txt file is not updated.
