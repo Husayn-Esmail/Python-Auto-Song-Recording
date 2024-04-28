@@ -68,10 +68,10 @@ create a progress bar for recordings
 indication for when identification is happening
 improve performance
 
-- fix print statements so that they're more useful and give clearer information about what's currently being recorded
+- ~~fix print statements so that they're more useful and give clearer information about what's currently being recorded~~
 - listen for a keyboard command or combination to exit cleanly if user wants to stop the job early or on the next end of song for checkpointing
-- fix program so that it doesn't break at midnight
-- print recording time elapsed for current song
-- There's a bug when keeping track of the unidentified tracks where if the program crashes, the counter.txt file is not updated.
+- ~~fix program so that it doesn't break at midnight~~
+- ~~print recording time elapsed for current song~~
+- ~~There's a bug when keeping track of the unidentified tracks where if the program crashes, the counter.txt file is not updated.~~
 - Support reading certain parameters from a configuration file (while giving defaults)
 - add support for a debug flag

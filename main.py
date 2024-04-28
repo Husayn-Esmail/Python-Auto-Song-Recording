@@ -182,9 +182,12 @@ def recording(seconds, queue):
         samplerate = sample_frequency, channels = 2)
     print("Recording in progress...")
     # print elapsed time by starting another process
-    #
-    #
-    #
+    # setup process, no need for queue since no return
+    prc = multiprocessing.Process(target=print_elapsed_time, args=(duration))
+    # start process
+    prc.start()
+    # wait for process to end if necessary, but probably not.
+    # prc.join()
 
     # wait for recording to finish
     sd.wait()
@@ -265,6 +268,12 @@ def print_elapsed_time(total_time):
     print('')
 
 def multi_process(record_duration):
+    """
+    Sets up everything for running parallel processes for recording
+    and idenitifying the song. It's basically the main userside recording function.
+    Requires the record duration in seconds.
+    Returns the song's info (title and artist) in a tuple.
+    """
     print("Setting up multi_process...")
     # create Queue to get return values
     Q = multiprocessing.Queue()
@@ -286,7 +295,7 @@ def multi_process(record_duration):
     # wait until second process is done
     prc2.join()
     # when both processes are finished
-    print("complete")
+    print("Processes complete!")
     return rets[0] # only return the first value cuz that's the meta data
 
 def record_song(minutes, seconds):

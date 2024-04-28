@@ -1,13 +1,8 @@
-# import libraries
-
 # audio recording
 import sounddevice as sd
 from scipy.io.wavfile import write
-
 # for identfiying currently playing song
 from ShazamAPI import Shazam
-
-
 # import functions from main that will work here
 from main import get_song_length, \
     read_unidentified_index, \
