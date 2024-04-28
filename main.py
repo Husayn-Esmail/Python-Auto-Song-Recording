@@ -1,37 +1,25 @@
-# import libraries
-
 # for recording audio
 import sounddevice as sd
 from scipy.io.wavfile import write
-
-# for recording
+# for normalizing recordings
 from pydub import AudioSegment, effects
-
 # for identifying currently playing song
 from ShazamAPI import Shazam
-
 # for writing metadata to mp3
 from mutagen.mp3 import MP3
 from mutagen.easyid3 import EasyID3
-
 # for playing and pausing media
 from pynput.keyboard import Key, Controller
-
 # for arguments
 import sys
-
 # for identifying song in the background while recording the song
 import multiprocessing
-
 # for creating date based folders
 import datetime
-
 # for sleeping
 import time
-
 # for creating folders
 import os
-
 # for adding the option of running the program in single threaded mode
 import SingleThreadedRecord
 
@@ -39,7 +27,6 @@ import SingleThreadedRecord
 # Global Constants ------------------------------
 UNIDENTIFIED_INDEX = 0
 INDEX_FILENAME = 'counter.txt'
-
 
 """
 PyRecording usage:
@@ -79,7 +66,7 @@ def read_unidentified_index():
     """
     reads the index file and returns the value
     """
-    index = 0
+    index = 0   # initialize index
     try:
         f = open(INDEX_FILENAME, 'r')
         # read index and convert it to int
@@ -105,8 +92,6 @@ def write_unidentified_index(index):
         print(e)
         print('error writing unidentified index')
         exit()
-
-
 
 def get_unidentified_index():
     """ THIS FUNCTION MIGHT BE DEPRECATED
@@ -143,8 +128,6 @@ def get_unidentified_index():
         # close file
         file_object.close()
     return int_content
-
-
 
 def identify_song(queue):
     """
@@ -196,7 +179,6 @@ def recording(seconds, queue):
     # recording of the song
     song_recording = sd.rec(int(duration * sample_frequency),
         samplerate = sample_frequency, channels = 2)
-    
 
     # wait for recording to finish
     sd.wait()
@@ -247,7 +229,20 @@ def play_pause():
     keyboard.press(Key.media_play_pause)
     keyboard.release(Key.media_play_pause)
 
+def print_elapsed_time(total_time):
+    """
+    Prints the time elapsed out of a given total, total_time (float in seconds).
+    Meant to help give real time status of the recording.
+    """
+    current_time = 0
+    minutes = total_time // 60 # integer divison by seconds
+    seconds = total_time - (minutes * 60) # subtract minutes in form of seconds
 
+    print(">>> Total time calculated: %d:%02d", minutes, seconds)
+    while current_time != total_time:
+        print(">>> Elapsed Time in seconds: %d/%02d"% (current_time, total_time), flush=True, end="\r")
+        time.sleep(1) # sleep for one second to reflect elapsed time
+        current_time += 1
 
 def multi_process(record_duration):
     print("Setting up multi_process...")

@@ -74,3 +74,4 @@ improve performance
 - print recording time elapsed for current song
 - There's a bug when keeping track of the unidentified tracks where if the program crashes, the counter.txt file is not updated.
 - Support reading certain parameters from a configuration file (while giving defaults)
+- add support for a debug flag
