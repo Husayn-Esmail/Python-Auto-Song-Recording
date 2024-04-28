@@ -76,10 +76,13 @@ def get_song_length(minutes, seconds):
 
 
 def read_unidentified_index():
+    """
+    reads the index file and returns the value
+    """
     index = 0
     try:
         f = open(INDEX_FILENAME, 'r')
-        # read overwrite index and convert it to int
+        # read index and convert it to int
         index = int(f.readline())
         f.close()
     except Exception as e:
@@ -90,6 +93,10 @@ def read_unidentified_index():
     
 
 def write_unidentified_index(index):
+    """
+    Writes an index number to the index file.
+    takes one argument: index (int)
+    """
     try:
         f = open(INDEX_FILENAME, 'w')
         f.write(str(index))
@@ -102,12 +109,12 @@ def write_unidentified_index(index):
 
 
 def get_unidentified_index():
-    """
+    """ THIS FUNCTION MIGHT BE DEPRECATED
     if a song is unidentified this function will store
-    the mp3 as unidentified[index].mp3 for manual revision later
-    this index comes from a file called counter.txt which is created
-    if it does not exist and is read from and updated if it does exist
-    the counter should always be unique to prevent conflicts
+    the mp3 as unidentified[index].mp3 for manual revision later.
+    This index comes from a file called counter.txt which is created
+    if it does not exist and is read from and updated if it does exist.
+    the counter should always be unique to prevent conflictsa and overwrites.
     """
     try: 
         # open index file to get unique index
@@ -145,7 +152,7 @@ def identify_song(queue):
     """
     # recording paramaters
     sample_frequency = 44100
-    duration = 5 # duration of recording in seconds
+    duration = 10 # duration of recording in seconds -- increased from 5 to 10
 
     # recording of song
     recording = sd.rec(int(duration * sample_frequency), samplerate = sample_frequency, channels = 2)
@@ -243,14 +250,14 @@ def play_pause():
 
 
 def multi_process(record_duration):
-    print("setting up multi_process...")
+    print("Setting up multi_process...")
     # create Queue to get return values
     Q = multiprocessing.Queue()
-    print("queue init'd...")
+    print("Queue init'd...")
     # creating processes for each of the functions
     prc1 = multiprocessing.Process(target=recording, args=(record_duration,Q))
     prc2 = multiprocessing.Process(target=identify_song, args=(Q,))
-    print("processes started")
+    print("Processes started")
     rets = []
     # starting the first process
     prc1.start()
