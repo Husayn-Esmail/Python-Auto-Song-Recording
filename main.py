@@ -22,6 +22,8 @@ import time
 import os
 # for adding the option of running the program in single threaded mode
 import SingleThreadedRecord
+# create a way to exit gracefully
+import signal
 
 
 # Global Constants ------------------------------
@@ -173,27 +175,30 @@ def recording(seconds, queue):
     sample_frequency = 96000
     duration = seconds
 
-    print("Starting Recording...")
-    # play the song
-    play_pause()
+    # setup multi-process
+    Q = multiprocessing.Queue()
+    # setup process, no need for queue since no return
+    prc = multiprocessing.Process(target=print_elapsed_time, args=(duration, Q))
 
-    # recording of the song
+    print("Starting Recording...")
+    # start recording
     song_recording = sd.rec(int(duration * sample_frequency),
         samplerate = sample_frequency, channels = 2)
+
+    # start the song
+    play_pause()
     print("Recording in progress...")
-    # print elapsed time by starting another process
-    # setup process, no need for queue since no return
-    prc = multiprocessing.Process(target=print_elapsed_time, args=(duration))
     # start process
     prc.start()
-    # wait for process to end if necessary, but probably not.
-    # prc.join()
 
     # wait for recording to finish
     sd.wait()
-    # pause song
+    # pause song and skip to next
     play_pause()
     skip_to_next()
+
+    # wait for process to end
+    prc.join()
 
     print("Writing recording to disk...")
     # write out the recording
@@ -250,7 +255,7 @@ def play_pause():
     keyboard.press(Key.media_play_pause)
     keyboard.release(Key.media_play_pause)
 
-def print_elapsed_time(total_time):
+def print_elapsed_time(total_time, Q):
     """
     Prints the time elapsed out of a given total, total_time (float in seconds).
     Meant to help give real time status of the recording.
@@ -259,8 +264,8 @@ def print_elapsed_time(total_time):
     minutes = total_time // 60 # integer divison by seconds
     seconds = total_time - (minutes * 60) # subtract minutes in form of seconds
 
-    print(">>> Total time calculated: %d:%02d", minutes, seconds)
-    while current_time != total_time:
+    print(">>> Total time calculated: %d:%02d" % (minutes, seconds))
+    while current_time <= total_time:
         print(">>> Elapsed Time in seconds: %d/%02d"% (current_time, total_time), flush=True, end="\r")
         time.sleep(1) # sleep for one second to reflect elapsed time
         current_time += 1
@@ -335,6 +340,7 @@ def makedirs():
         print("Temps directory exists")
     
     # Ensure directory for current date exists.
+    date = datetime.date.today().isoformat()
     if check_date_dir() == False:
         print(f"making directory {date}")
         os.mkdir(f"Recordings/{date}")
