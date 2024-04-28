@@ -207,11 +207,23 @@ def convert_to_mp3(song_info):
     sound = AudioSegment.from_wav('Temps/recording.wav')
     title = song_info[0]
     artist = str(song_info[1])
-    # clean up identification data
+    # Clean up song identification data
     title = title.replace('/', '-')
     artist = artist.replace('/', '-')
+
+    # prepare to save the file
     date = datetime.date.today().isoformat()
+    time = datetime.datetime.now()
     filename = f"Recordings/{date}/{title} - {artist}.mp3"
+
+    if check_date_dir() != True:
+        print(f"""{date} directory doesn't exist (likely due to day change)
+Current Time: {time}
+Creating {date} directory""")
+        # actually making the directory
+        os.mkdir(f"Recordings/{date}")
+
+    # save the file
     sound.export(filename, format='mp3', bitrate="320k")
     song = filename
     mp3file = MP3(song, ID3=EasyID3)
@@ -254,12 +266,12 @@ def multi_process(record_duration):
     # creating processes for each of the functions
     prc1 = multiprocessing.Process(target=recording, args=(record_duration,Q))
     prc2 = multiprocessing.Process(target=identify_song, args=(Q,))
-    print("Processes started")
     rets = []
     # starting the first process
     prc1.start()
     # start second process
     prc2.start()
+    print("Processes started")
 
     rets.append(Q.get())
     rets.append(Q.get())
@@ -274,12 +286,11 @@ def multi_process(record_duration):
 def record_song(minutes, seconds):
     # calculate song length 
     song_length = get_song_length(minutes, seconds)
-    print(f"Song length calculated: {song_length}")
-    # give 2 seconds buffer time for recording
-    # song_length += 2
 
-    print("recording")
+    # start the recording process
     song_info = multi_process(song_length)
+
+    # check if song was identified.
     if song_info != None:
         convert_to_mp3(song_info)
     else:
@@ -308,12 +319,22 @@ def makedirs():
     else:
         print("Temps directory exists")
     
-    date = datetime.date.today().isoformat()
-    if date not in os.listdir("Recordings"):
+    # Ensure directory for current date exists.
+    if check_date_dir() == False:
         print(f"making directory {date}")
         os.mkdir(f"Recordings/{date}")
     else:
         print(f"directory {date} already exists")
+
+def check_date_dir():
+    """
+    Checks if the current date directory exists or not.
+    """
+    date = datetime.date.today().isoformat()
+    if date not in os.listdir("Recordings"):
+        return 0
+    return 1
+
 
 def batch(filename):
     print("Running in batch mode...")
@@ -332,13 +353,14 @@ def batch(filename):
 
     # make dirs
     makedirs()
-
+    print ("*" * 20)
     # convert all entries to int
     for array in song_lengths:
         minutes = int(array[0])
         seconds = float(array[1])
         info = record_song(minutes, seconds)
         print(f"recorded {info[0]} - {info[1]}")
+        print("*" * 20)
     
     # write out to the unidentified index file
     write_unidentified_index(UNIDENTIFIED_INDEX)
