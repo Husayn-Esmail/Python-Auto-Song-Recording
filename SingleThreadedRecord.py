@@ -38,7 +38,7 @@ def single_threaded_identify_song(filename):
     if song_info != None:
         print(f"identified artist: {song_info[1]} song: {song_info[0]}")
     else:
-        print("song unidentifiable..")
+        print("Song unidentifiable.")
     return song_info
 
 def single_threaded_recording(seconds):
@@ -48,23 +48,24 @@ def single_threaded_recording(seconds):
 
     # record song
     song_recording = sd.rec(sample_freq_by_duration, samplerate=sample_frequency, channels=2)
+
     # play song
     play_pause()
+
     # wait for recording to finish
     sd.wait()
 
     # pause song
     play_pause()
-    
 
     # write out the recording
-    print('writing recording to disk...')
+    print('Writing recording to disk...')
     write("Temps/recording.wav", sample_frequency, song_recording)
 
 
 def single_thread_record_song(minutes, seconds):
     global UNIDENTIFIED_INDEX
-    print("Running single threaded record song")
+    print("Running single threaded record song...")
     # calculate song length
     song_length = get_song_length(minutes, seconds)
     print(f"Song length calculated: {song_length}")
@@ -82,10 +83,10 @@ def single_thread_record_song(minutes, seconds):
     return song_info
 
 def single_threaded_batch(filename):
-    print("Running in single-threaded batch mode")
+    print("Running in single-threaded batch mode...")
     song_lengths = []
     with open(filename, "r") as f:
-        # split bby spaces
+        # split by spaces
         for line in f:
             song_lengths.append(line.split())
 
@@ -103,7 +104,4 @@ def single_threaded_batch(filename):
             minutes = int(array[0])
             seconds = float(array[1])
             info = single_thread_record_song(minutes, seconds)
-            print(f"recorded {info[0]} - {info[1]} ")
-        
-        # write out to the unidentified index file
-        write_unidentified_index(UNIDENTIFIED_INDEX)
+            print(f"Recorded \"{info[0]} - {info[1]}.mp3\"")
