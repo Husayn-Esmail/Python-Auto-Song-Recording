@@ -243,6 +243,8 @@ def print_elapsed_time(total_time):
         print(">>> Elapsed Time in seconds: %d/%02d"% (current_time, total_time), flush=True, end="\r")
         time.sleep(1) # sleep for one second to reflect elapsed time
         current_time += 1
+    # print the empty line so the next print statement doesn't overwrite.
+    print('')
 
 def multi_process(record_duration):
     print("Setting up multi_process...")
