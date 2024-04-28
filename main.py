@@ -173,12 +173,18 @@ def recording(seconds, queue):
     sample_frequency = 96000
     duration = seconds
 
+    print("Starting Recording...")
     # play the song
     play_pause()
 
     # recording of the song
     song_recording = sd.rec(int(duration * sample_frequency),
         samplerate = sample_frequency, channels = 2)
+    print("Recording in progress...")
+    # print elapsed time by starting another process
+    #
+    #
+    #
 
     # wait for recording to finish
     sd.wait()
@@ -186,10 +192,10 @@ def recording(seconds, queue):
     play_pause()
     skip_to_next()
 
-    print("writing recording to disk...")
+    print("Writing recording to disk...")
     # write out the recording
     write("Temps/recording.wav", sample_frequency, song_recording)
-    print("done")
+    print("Finished Recording and writing to Temps/recording.wav")
     queue.put(None)
 
 def normalize(filename, format):
@@ -197,7 +203,6 @@ def normalize(filename, format):
     rawsound = AudioSegment.from_file(filename, format)  
     normalizedsound = effects.normalize(rawsound)  
     normalizedsound.export(filename, format=format)
-
 
 def convert_to_mp3(song_info):
     print("Converting to mp3...")
@@ -229,14 +234,15 @@ Creating {date} directory""")
     mp3file = MP3(song, ID3=EasyID3)
     mp3file['title'] = [title]
     mp3file['artist'] = [artist]
+    print("Saving...")
     mp3file.save()
-
+    print("Saved")
 
 def play_pause():
     """
     automates pressing the play/pause media key when recording.
     """
-    print("play_pause() called")
+    print("Play/Pause")
     keyboard = Controller()
     keyboard.press(Key.media_play_pause)
     keyboard.release(Key.media_play_pause)
@@ -294,12 +300,12 @@ def record_song(minutes, seconds):
     if song_info != None:
         convert_to_mp3(song_info)
     else:
-        global UNIDENTIFIED_INDEX
-        # unidentified_index = get_unidentified_index()
-        # song_info = ("unidentified", unidentified_index)
+        global UNIDENTIFIED_INDEX # required to access global variable
         song_info = ("unidentified", UNIDENTIFIED_INDEX)
         UNIDENTIFIED_INDEX += 1 # increment unidentified index
         convert_to_mp3(song_info)
+        # write the unidentified index back to the file
+        write_unidentified_index(UNIDENTIFIED_INDEX)
     return song_info
 
 def makedirs():
@@ -359,11 +365,8 @@ def batch(filename):
         minutes = int(array[0])
         seconds = float(array[1])
         info = record_song(minutes, seconds)
-        print(f"recorded {info[0]} - {info[1]}")
+        print(f"Recorded \"{info[0]} - {info[1]}.mp3\"")
         print("*" * 20)
-    
-    # write out to the unidentified index file
-    write_unidentified_index(UNIDENTIFIED_INDEX)
 
 def skip_to_next():
     print("skipping to next...")
@@ -418,6 +421,8 @@ if __name__ == '__main__':
                 song_info = ("unidentified", UNIDENTIFIED_INDEX)
                 UNIDENTIFIED_INDEX += 1 # increment unidentified index
                 convert_to_mp3(song_info)
+                # write the index back to the file
+                write_unidentified_index(UNIDENTIFIED_INDEX)
         else:
             minutes = sys.argv[1]
             seconds = sys.argv[2]
@@ -451,8 +456,3 @@ if __name__ == '__main__':
     # if no argument has been given, show the help screen
     else:
         print(HELP)
-
-    # write the index after all operations at the risk of losing the current unidentified index
-    # should an error occur.
-    write_unidentified_index(UNIDENTIFIED_INDEX)
-

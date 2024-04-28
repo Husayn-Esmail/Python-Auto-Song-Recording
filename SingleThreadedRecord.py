@@ -77,6 +77,8 @@ def single_thread_record_song(minutes, seconds):
         song_info = ("unidentified", UNIDENTIFIED_INDEX)
         UNIDENTIFIED_INDEX += 1
         convert_to_mp3(song_info)
+        # write unidentified index to prevent dataloss
+        write_unidentified_index(UNIDENTIFIED_INDEX)
     return song_info
 
 def single_threaded_batch(filename):
