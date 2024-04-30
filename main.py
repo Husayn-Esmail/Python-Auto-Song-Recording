@@ -22,8 +22,9 @@ import time
 import os
 # for adding the option of running the program in single threaded mode
 import SingleThreadedRecord
-# create a way to exit gracefully
-import signal
+# trying to exit gracefully
+import tkinter
+from tkinter import ttk
 
 
 # Global Constants ------------------------------
@@ -357,6 +358,28 @@ def check_date_dir():
     return 1
 
 
+def set_interrupt(interrupt_var):
+    """
+    bad programming, this changes the variable inside the function
+    """
+    interrupt_var = 1
+    print(interrupt_var)
+    print("set_interrupt called")
+
+def wind_func(int_var):
+    tk = tkinter.Tk()
+    tk.title("PyRecording")
+
+    frame = ttk.Frame(tk, padding=10)
+    frame.grid()
+    label_text = "Pause exits the program after the current song finishes"
+#    label_text = "Exit stops the program immediately, pause exits after the next song ends"
+    ttk.Label(frame, text=label_text).grid(column=0, row=0)
+    ttk.Button(frame, text="Pause", command=lambda: set_interrupt(int_var)).grid(column=0, row=1)
+    # ttk.Button(frame, text="Exit", command=tk.destroy).grid(column=0, row=2)
+    tk.mainloop()
+
+
 def batch(filename):
     print("Running in batch mode...")
     song_lengths = []
@@ -375,6 +398,10 @@ def batch(filename):
     # make dirs
     makedirs()
     print ("*" * 20)
+    interrupt_status = 0
+    prc = multiprocessing.Process(target=wind_func, args=[interrupt_status])
+    prc.start()
+    
     # convert all entries to int
     for array in song_lengths:
         minutes = int(array[0])
@@ -382,6 +409,13 @@ def batch(filename):
         info = record_song(minutes, seconds)
         print(f"Recorded \"{info[0]} - {info[1]}.mp3\"")
         print("*" * 20)
+        
+        print("interrupt_status")
+        if interrupt_status:
+               print("Interrupt Called")
+               break
+
+    prc.join()
 
 def skip_to_next():
     print("skipping to next...")
