@@ -22,14 +22,16 @@ import time
 import os
 # for adding the option of running the program in single threaded mode
 import SingleThreadedRecord
-# trying to exit gracefully
+# used to pause the program
 import tkinter
 from tkinter import ttk
-
+# used to kill the thread
+import threading
 
 # Global Constants ------------------------------
 UNIDENTIFIED_INDEX = 0
 INDEX_FILENAME = 'counter.txt'
+DEBUG = 0
 
 """
 PyRecording usage:
@@ -171,7 +173,7 @@ def recording(seconds, queue):
     returns nothing
     """
     
-    # recording paramaters
+    # recording parameters
     # sampling freq
     sample_frequency = 96000
     duration = seconds
@@ -186,11 +188,12 @@ def recording(seconds, queue):
     song_recording = sd.rec(int(duration * sample_frequency),
         samplerate = sample_frequency, channels = 2)
 
+    # start process
+    prc.start()
+
     # start the song
     play_pause()
     print("Recording in progress...")
-    # start process
-    prc.start()
 
     # wait for recording to finish
     sd.wait()
@@ -357,28 +360,35 @@ def check_date_dir():
         return 0
     return 1
 
+class interrupt_obj:
+    interrupt_val = 0
 
-def set_interrupt(interrupt_var):
-    """
-    bad programming, this changes the variable inside the function
-    """
-    interrupt_var = 1
-    print(interrupt_var)
-    print("set_interrupt called")
+    def trigger_interrupt(self):
+        self.interrupt_val = 1
+        print("\n\rPause clicked! Program will end at end of next song")
+        
+        if DEBUG:
+            print(f"self.interrupt_val: {self.interrupt_val}")
 
-def wind_func(int_var):
-    tk = tkinter.Tk()
-    tk.title("PyRecording")
+    def get_interrupt_val(self):
+        global DEBUG
+        if DEBUG:
+            print("interrupt_val = %d" % self.interrupt_val)
+        return self.interrupt_val
 
-    frame = ttk.Frame(tk, padding=10)
+def onPress(q, int_var):
+    int_var.trigger_interrupt()
+    q.put(int_var)
+
+def tkinter_process(queue, int_var):
+    root = tkinter.Tk()
+    frame = ttk.Frame(root, padding=10)
+    root.title("PyRecording")
     frame.grid()
     label_text = "Pause exits the program after the current song finishes"
-#    label_text = "Exit stops the program immediately, pause exits after the next song ends"
     ttk.Label(frame, text=label_text).grid(column=0, row=0)
-    ttk.Button(frame, text="Pause", command=lambda: set_interrupt(int_var)).grid(column=0, row=1)
-    # ttk.Button(frame, text="Exit", command=tk.destroy).grid(column=0, row=2)
-    tk.mainloop()
-
+    ttk.Button(frame, text="Pause", command=lambda: onPress(queue, int_var)).grid(column=0, row=1)
+    root.mainloop()
 
 def batch(filename):
     print("Running in batch mode...")
@@ -398,23 +408,35 @@ def batch(filename):
     # make dirs
     makedirs()
     print ("*" * 20)
-    interrupt_status = 0
-    prc = multiprocessing.Process(target=wind_func, args=[interrupt_status])
+
+    # set an object for maintaining interrupt state
+    interrupt = interrupt_obj()
+    Q = multiprocessing.Queue()
+    prc = multiprocessing.Process(target=tkinter_process, args=[Q,interrupt])
+
+    # start process for tkinter window so it doesn't block
     prc.start()
-    
+ 
     # convert all entries to int
     for array in song_lengths:
         minutes = int(array[0])
         seconds = float(array[1])
         info = record_song(minutes, seconds)
         print(f"Recorded \"{info[0]} - {info[1]}.mp3\"")
-        print("*" * 20)
-        
-        print("interrupt_status")
-        if interrupt_status:
-               print("Interrupt Called")
-               break
+        print("*" * 20) 
+        if DEBUG:
+            print(f"interrupt_val = {interrupt.get_interrupt_val()}")
+        if not Q.empty():
+            interrupt = Q.get()
+            if DEBUG:
+                print(interrupt)
+            if interrupt.get_interrupt_val():
+                if DEBUG:
+                    print("\rInterrupt Called")
+                prc.terminate()
+                break
 
+    prc.terminate()
     prc.join()
 
 def skip_to_next():
