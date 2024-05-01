@@ -99,7 +99,7 @@ def write_unidentified_index(index):
         exit()
 
 def get_unidentified_index():
-    """ THIS FUNCTION MIGHT BE DEPRECATED
+    """ THIS FUNCTION IS DEPRECATED
     if a song is unidentified this function will store
     the mp3 as unidentified[index].mp3 for manual revision later.
     This index comes from a file called counter.txt which is created
@@ -211,12 +211,20 @@ def recording(seconds, queue):
     queue.put(None)
 
 def normalize(filename, format):
+    """
+    Normalizes the audio to a consistent level for the given
+    filename of type format.
+    """
     print("Normalizing Audio...")
     rawsound = AudioSegment.from_file(filename, format)  
     normalizedsound = effects.normalize(rawsound)  
     normalizedsound.export(filename, format=format)
 
 def convert_to_mp3(song_info):
+    """
+    Converts the recording in Temps folder to mp3 format
+    with the given song_info tuple.
+    """
     print("Converting to mp3...")
     # normalize before conversion
     normalize("Temps/recording.wav", "wav")
@@ -327,6 +335,10 @@ def record_song(minutes, seconds):
     return song_info
 
 def makedirs():
+    """
+    Creates necessary base directories for recordings.
+    It doesn't create date labelled directories.
+    """
     # list the contents of the current directory
     dir = os.listdir()
     # if recordings doens't exist, create the directory
@@ -364,6 +376,10 @@ class interrupt_obj:
     interrupt_val = 0
 
     def trigger_interrupt(self):
+        """
+        Sets the interrupt flag to 1 (True)
+        So that the reader knows to interrupt the program
+        """
         self.interrupt_val = 1
         print("\n\rPause clicked! Program will end at end of next song")
         
@@ -371,26 +387,44 @@ class interrupt_obj:
             print(f"self.interrupt_val: {self.interrupt_val}")
 
     def get_interrupt_val(self):
-        global DEBUG
+        """
+        Sets reads the interrupt value and returns it
+        so that those wanting to read the interrupt value
+        aren't reading it directly
+        """
         if DEBUG:
             print("interrupt_val = %d" % self.interrupt_val)
         return self.interrupt_val
 
 def onPress(q, int_var):
+    """
+    The function which takes multiprocessing Queue
+    and an interrupt_obj and handles the steps to be
+    taken on pressing the pause button.
+    """
     int_var.trigger_interrupt()
     q.put(int_var)
 
 def tkinter_process(queue, int_var):
+    """
+    This function sets up and operates the tkinter window which
+    allows the user to interrupt the program. 
+    """
     root = tkinter.Tk()
     frame = ttk.Frame(root, padding=10)
     root.title("PyRecording")
     frame.grid()
-    label_text = "Pause exits the program after the current song finishes"
+    label_text = "Interrupt exits the program after the current song finishes"
     ttk.Label(frame, text=label_text).grid(column=0, row=0)
-    ttk.Button(frame, text="Pause", command=lambda: onPress(queue, int_var)).grid(column=0, row=1)
+    ttk.Button(frame, text="Interrupt", command=lambda: onPress(queue, int_var)).grid(column=0, row=1)
     root.mainloop()
 
 def batch(filename):
+    """
+    The function houses the funcitonality of iterating over a given
+    file and recording multiple songs sequentially and in an automated
+    fashion. 
+    """
     print("Running in batch mode...")
     song_lengths = []
     with open(filename, "r") as f:
@@ -440,6 +474,9 @@ def batch(filename):
     prc.join()
 
 def skip_to_next():
+    """
+    Presses the skip media key
+    """
     print("skipping to next...")
     keyboard = Controller()
     keyboard.press(Key.media_next)
