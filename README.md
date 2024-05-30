@@ -63,6 +63,7 @@ enter the name of a .txt file containing entries on each line in the form:
 
 **Pro Tip**: The program ignores everything after minutes and seconds so if you're doing a lot of songs
 it can be very helpful to comment the names of each songs after the length, for example:
+
 3 07    # We Don't Talk Anymore
 
 Naturally, I don't use the full name, usually just the first two words or something because I'm the only
